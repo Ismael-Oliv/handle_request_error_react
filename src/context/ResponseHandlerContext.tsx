@@ -9,22 +9,20 @@ const ResponseHandlerContext = createContext({});
 
 export function ResponseHandlerProvider({ children }: ResponseHandlerProps) {
   useEffect(() => {
-    api.interceptors.response.use(
+    const responseInterceptor = api.interceptors.response.use(
       (response) => {
         return Promise.resolve(response);
       },
       (error) => {
-        console.log(error.response.data);
-
         alert(error.response.data.message);
         return Promise.reject(error);
       }
     );
+
+    return () => {
+      api.interceptors.response.eject(responseInterceptor);
+    };
   }, []);
 
-  return (
-    <ResponseHandlerContext.Provider value={{}}>
-      {children}
-    </ResponseHandlerContext.Provider>
-  );
+  return <ResponseHandlerContext.Provider value={{}}>{children}</ResponseHandlerContext.Provider>;
 }
